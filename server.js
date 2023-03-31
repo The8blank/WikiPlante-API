@@ -3,7 +3,7 @@ const app = express();
 const morgan = require("morgan");
 const database = require("./database/Mysql.database.js");
 
-const routeUser = require("./routes/User.route.js");
+const router = require("./routes");
 
 const port = process.env.PORT || 8080;
 
@@ -15,10 +15,12 @@ database.sequelize
   })
   .catch((err) => console.log(err));
 
+// Parse le body de la requete en json
 app.use(express.json());
 app.use(morgan("short"))
 
-app.use("/wikiplante-api/user", routeUser);
+// Router 
+app.use("/wikiplante-api", router);
 
 app.listen(port, () => {
   console.log(`server listening on ${port}`);

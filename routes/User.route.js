@@ -1,11 +1,13 @@
 const express = require("express");
-const router = express.Router();
+const UserRouter = express.Router();
 
 const {
     inscription,
   } = require("../controllers/User.controller.js");
 
-router.post("/inscription", inscription);
+
+// Inscritpion route
+UserRouter.post("/inscription", inscription);
 
 
-module.exports = router;
+module.exports = UserRouter;

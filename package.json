@@ -4,7 +4,7 @@
   "description": "API WIKIPLANTE",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node  --watch server.js",
     "initdb": "node database/initDatabase.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -31,8 +31,5 @@
     "morgan": "^1.10.0",
     "mysql2": "^3.2.0",
     "sequelize": "^6.30.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.22"
   }
 }
