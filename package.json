@@ -1,0 +1,38 @@
+{
+  "name": "wikiplante-api",
+  "version": "1.0.0",
+  "description": "API WIKIPLANTE",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "initdb": "node database/initDatabase.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/The8blank/wikiplante-api.git"
+  },
+  "keywords": [
+    "api",
+    "plante",
+    "wikiplante",
+    "fiche-technique"
+  ],
+  "author": "samuel chojnacki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/The8blank/wikiplante-api/issues"
+  },
+  "homepage": "https://github.com/The8blank/wikiplante-api#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.2.0",
+    "sequelize": "^6.30.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
