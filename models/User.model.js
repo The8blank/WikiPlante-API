@@ -44,11 +44,11 @@ module.exports = UserModel = {
     },
   },
 
-  isAdmin: {
+  isAdmin : {
     type: Sequelize.BOOLEAN,
     allowNull: false,
-    defaultValue: false,
-  },
+    defaultValue: false
+  }
 };
 
 module.exports = UserModel;

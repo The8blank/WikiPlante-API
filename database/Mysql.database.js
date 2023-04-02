@@ -1,6 +1,7 @@
 const { Sequelize } = require("sequelize");
-const UserModel = require("../models/User.model");
 require("dotenv").config();
+
+const { UserModel, RoleModel } = require("../models");
 
 // Creation de la connexion a la database
 const sequelize = new Sequelize(
@@ -10,22 +11,22 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT,
-    operatorsAliases: false,
+    operatorsAliases: 0,
     pool: {
       max: 5,
       min: 0,
       acquire: 30000,
       idle: 10000,
     },
+    logging: false
   }
 );
 
-// Definition du model user
+// Definition de la base de donnee
 const database = {};
 database.Sequelize = Sequelize;
-database.sequelize = sequelize
+database.sequelize = sequelize;
 
-database.user = database.sequelize.define("users", UserModel)
-
+database.user = database.sequelize.define("users", UserModel);
 
 module.exports = database;

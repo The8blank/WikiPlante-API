@@ -13,7 +13,7 @@ connexion.connect((err) => {
     return;
   }
 
-  console.log("\x1b[1m", "\x1b[34m", "connected as id " + connexion.threadId);
+  console.log("connected as id " + connexion.threadId);
 });
 
 connexion.query(

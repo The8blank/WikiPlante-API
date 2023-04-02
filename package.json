@@ -4,8 +4,8 @@
   "description": "API WIKIPLANTE",
   "main": "app.js",
   "scripts": {
-    "start": "node  --watch server.js",
-    "initdb": "node database/initDatabase.js",
+    "start": "nodemon server.js",
+    "initdb": "node database/init.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,10 +26,17 @@
   "homepage": "https://github.com/The8blank/wikiplante-api#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "helmet": "^6.0.1",
+    "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
     "mysql2": "^3.2.0",
     "sequelize": "^6.30.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }
