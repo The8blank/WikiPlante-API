@@ -73,7 +73,7 @@ exports.getOneUser = async (req, res, next) => {
     user = await database.user.findByPk(id);
 
     if (!user) {
-      return res.status(404).json({ error: "user not found." });
+      return res.status(404).json({ error: "Utilisateur introuvable." });
     }
 
     newRecord = {
@@ -99,6 +99,10 @@ exports.getAllUsers = async (req, res, next) => {
       attributes: { exclude: ["password"] },
     });
 
+    if (!users) {
+      return res.status(404).json({ error: "users not found." });
+    }
+
     res.status(200).json({ users });
   } catch (err) {
     res.status(404).json({ error: err });
@@ -109,13 +113,7 @@ exports.updateUser = async (req, res, next) => {
   try {
     let user;
     let id;
-    let userFromToken;
     let newRecord;
-
-    userFromToken = res.locals.user;
-    if (!userFromToken) {
-      return res.status(401).json({ error: "Vous devez etre connecte." });
-    }
 
     id = req.params.id;
 
@@ -124,22 +122,18 @@ exports.updateUser = async (req, res, next) => {
       return res.status(404).json({ error: "Utilisateur introuvable." });
     }
 
-    if (userFromToken.id != user.id || userFromToken.isAdmin) {
-      return res.status(401).json({ error: "Requête invalide !" });
-    }
-
     newRecord = {
       ...req.body,
     };
 
-    await user.update(newRecord).then(() => {
-      res.status(201).json({ message: "Utilisateur modifie" });
-    })
-    .catch((err) => {
-      res.status(500).json(err)
-    })
-
-    
+    await user
+      .update(newRecord)
+      .then(() => {
+        res.status(201).json({ message: "Utilisateur modifie" });
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -148,25 +142,19 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
   try {
     let user;
-    let userFromToken;
 
     user = await database.user.findByPk(req.params.id);
-    userFromToken = res.locals.user;
-
-    if (!userFromToken) {
-      return res.status(401).json({ error: "Vous devez etre connecte." });
-    }
-
-    // Conpare le proprietaire du compte en database avec l'initiateur de la requete
     if (!user)
       return res.status(404).json({ message: "Utilisateur introuvable." });
 
-    if (user.id != userFromToken.id || userFromToken.isAdmin)
-      return res.status(400).json({ message: "Requête invalide !" });
-
-    await user.destroy();
-
-    res.status(200).json({ message: "Utilisateur supprimé" });
+    await user
+      .destroy()
+      .then(() => {
+        res.status(200).json({ message: "Utilisateur supprimé" });
+      })
+      .catch((err) => {
+        res.status(500).json(err);
+      });
   } catch (err) {
     return res
       .status(500)
