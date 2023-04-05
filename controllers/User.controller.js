@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const database = require("../database/Mysql.database");
+const database = require("../models");
 
 require("dotenv").config();
 
-exports.inscription = (req, res, next) => {
+exports.inscription = async (req, res, next) => {
   try {
     let user;
 
@@ -17,13 +17,13 @@ exports.inscription = (req, res, next) => {
     database.user
       .create(user)
       .then((user) => {
-        res.status(201).json({ user });
+        res.status(201).json({ userId: user.id });
       })
       .catch((err) => {
-        return res.status(501).json(err.errors[0].message);
+        res.status(400).json({ error: err });
       });
   } catch (err) {
-    res.status(404).json(err);
+    res.status(500).json({ error: err });
   }
 };
 
@@ -37,13 +37,13 @@ exports.connexion = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.status(404).json({ errors: "Email incorrect / inconnue" });
+      return res.status(404).json({ error: "Email incorrect / inconnue" });
     }
 
     // Comparaison du mot de passe de la requete et du compte user trouve
     bcrypt.compare(req.body.password, user.password, function (err, result) {
       if (!result) {
-        return res.status(401).json({ errors: "Mot de passe incorrect" });
+        return res.status(401).json({ error: "Mot de passe incorrect" });
       } else {
         token = jwt.sign({ userId: user.id }, process.env.SECRET_TOKEN, {
           expiresIn: "24h",
@@ -54,7 +54,7 @@ exports.connexion = async (req, res, next) => {
           maxAge: 1000 * 60 * 60 * 24,
         });
 
-        res.status(200).json({ user: user.id });
+        res.status(200).json({ userId: user.id });
       }
     });
   } catch (err) {
@@ -85,9 +85,9 @@ exports.getOneUser = async (req, res, next) => {
       updatedAt: user.updatedAt,
     };
 
-    res.status(200).json(newRecord);
+    res.status(200).json({ user: newRecord });
   } catch (err) {
-    res.status(501).json(err);
+    res.status(500).json({ error: err });
   }
 };
 
@@ -103,9 +103,9 @@ exports.getAllUsers = async (req, res, next) => {
       return res.status(404).json({ error: "users not found." });
     }
 
-    res.status(200).json({ users });
+    res.status(200).json({ users: users });
   } catch (err) {
-    res.status(404).json({ error: err });
+    res.status(500).json({ error: err });
   }
 };
 
@@ -126,16 +126,16 @@ exports.updateUser = async (req, res, next) => {
       ...req.body,
     };
 
-    await user
+    user
       .update(newRecord)
-      .then(() => {
-        res.status(201).json({ message: "Utilisateur modifie" });
+      .then((user) => {
+        res.status(201).json({ user: user });
       })
       .catch((err) => {
-        res.status(500).json(err);
+        res.status(400).json({ error: err });
       });
   } catch (err) {
-    return res.status(500).json({ message: err });
+    return res.status(500).json({ error: err });
   }
 };
 
@@ -147,14 +147,8 @@ exports.deleteUser = async (req, res, next) => {
     if (!user)
       return res.status(404).json({ message: "Utilisateur introuvable." });
 
-    await user
-      .destroy()
-      .then(() => {
-        res.status(200).json({ message: "Utilisateur supprimé" });
-      })
-      .catch((err) => {
-        res.status(500).json(err);
-      });
+    await user.destroy();
+    res.status(200).json({ message: "Utilisateur supprimé" });
   } catch (err) {
     return res
       .status(500)

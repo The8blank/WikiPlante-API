@@ -7,17 +7,22 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
+const database = require("./models");
 const { checkUser } = require("./middleware/auth.js");
-const database = require("./database/Mysql.database.js");
 const router = require("./routes");
 
 const app = express();
 
 // Connexion à la base de données, initialisations des tables
-database.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and Resync database");
-});
+// Retirer force pour la production
+database.sequelize
+  .sync({ force: true })
+  .then(() => {
+    console.log("Synced db.");
+  })
+  .catch((err) => {
+    console.log("Failed to sync db: " + err.message);
+  });
 
 // Parse le body de la requete en json
 app.use(express.json());
@@ -29,20 +34,13 @@ app.use(cookieParser());
 // JWT
 app.use("*", checkUser);
 
-
 // Routes
 app.use("/wikiplante-api", router);
-
-
-// Error handling
-app.use(function (err, req, res, next) {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
-});
-
 
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
   console.log(`server listening on ${port}`);
 });
+
+module.exports = app;

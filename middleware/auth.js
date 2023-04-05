@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const dataBase = require("../database/Mysql.database");
-require("dotenv").config({ path: "./config/.env" });
+const database = require("../models");
+require("dotenv").config();
 
 /**
  *@description Cette fonction middleware vérifie si l'utilisateur est authentifié à l'aide d'un cookie contenant un JSON Web Token (JWT).
@@ -24,7 +24,7 @@ module.exports.checkUser = async (req, res, next) => {
       }
 
       let user;
-      user = await dataBase.user.findByPk(decodedToken.userId);
+      user = await database.user.findByPk(decodedToken.userId);
 
       if (!user) {
         res.locals.user = null;
@@ -70,7 +70,7 @@ module.exports.checkAuthor = async (req, res, next) => {
   }
 
   if (authorId != userFromToken.id)
-    return res.status(401).json({ message: "Requête invalide !" });
+    return res.status(498).json({ message: "Requête invalide !" });
 
   next();
 };
@@ -88,7 +88,7 @@ module.exports.requireAuth = async (req, res, next) => {
   const token = req.cookies.jwt;
 
   if (!token)
-    return res.status(401).json({ error: "Vous devez etre connecte !" });
+    return res.status(498).json({ error: "Vous devez etre connecte !" });
 
   jwt.verify(token, process.env.SECRET_TOKEN, async (err, decodedToken) => {
     if (err)
