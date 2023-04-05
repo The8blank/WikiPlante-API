@@ -18,10 +18,10 @@ const app = express();
 database.sequelize
   .sync({ force: true })
   .then(() => {
-    console.log("Synced db.");
+    console.log("✅ Sync and Reset database.");
   })
   .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
+    console.log("Unable to connect to the database:" + err.message);
   });
 
 // Parse le body de la requete en json
@@ -37,10 +37,15 @@ app.use("*", checkUser);
 // Routes
 app.use("/wikiplante-api", router);
 
-const port = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 
-app.listen(port, () => {
-  console.log(`server listening on ${port}`);
+app.listen(PORT, async () => {
+  console.log("🚀Server started Successfully");
 });
+
+app.use( (err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send({ error: err.stack });
+})
 
 module.exports = app;

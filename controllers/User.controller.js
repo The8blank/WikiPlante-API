@@ -20,10 +20,10 @@ exports.inscription = async (req, res, next) => {
         res.status(201).json({ userId: user.id });
       })
       .catch((err) => {
-        res.status(400).json({ error: err });
+        res.status(400).json({ error: err.stack });
       });
   } catch (err) {
-    res.status(500).json({ error: err });
+    next(err);
   }
 };
 
@@ -58,7 +58,7 @@ exports.connexion = async (req, res, next) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: err });
+    next(err);
   }
 };
 
@@ -87,7 +87,7 @@ exports.getOneUser = async (req, res, next) => {
 
     res.status(200).json({ user: newRecord });
   } catch (err) {
-    res.status(500).json({ error: err });
+    next(err);
   }
 };
 
@@ -99,13 +99,9 @@ exports.getAllUsers = async (req, res, next) => {
       attributes: { exclude: ["password"] },
     });
 
-    if (!users) {
-      return res.status(404).json({ error: "users not found." });
-    }
-
     res.status(200).json({ users: users });
   } catch (err) {
-    res.status(500).json({ error: err });
+    next(err);
   }
 };
 
@@ -132,10 +128,10 @@ exports.updateUser = async (req, res, next) => {
         res.status(201).json({ user: user });
       })
       .catch((err) => {
-        res.status(400).json({ error: err });
+        res.status(400).json({ error: err.stack });
       });
   } catch (err) {
-    return res.status(500).json({ error: err });
+    next(err);
   }
 };
 
@@ -150,9 +146,7 @@ exports.deleteUser = async (req, res, next) => {
     await user.destroy();
     res.status(200).json({ message: "Utilisateur supprimé" });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Erreur lors de la suppression", err });
+    next(err);
   }
 };
 

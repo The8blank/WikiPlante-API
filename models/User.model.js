@@ -14,7 +14,6 @@ module.exports = (sequelize, Sequelize) => {
       lowercase: true,
       allowNull: false,
       validate: {
-        is: /^[a-z ,.'-]+$/i,
         len: [6,40], 
       },
     },
