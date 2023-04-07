@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const database = require("../models");
+const db = require("../models");
 
 require("dotenv").config();
 
@@ -14,13 +13,12 @@ exports.inscription = async (req, res, next) => {
       password: req.body.password,
     };
 
-    database.user
-      .create(user)
+    db.Users.create(user)
       .then((user) => {
         res.status(201).json({ userId: user.id });
       })
       .catch((err) => {
-        res.status(400).json({ error: err.stack });
+        res.status(400).json({ error: err });
       });
   } catch (err) {
     next(err);
@@ -32,7 +30,7 @@ exports.connexion = async (req, res, next) => {
     let user;
     let token;
 
-    user = await database.user.findOne({
+    user = await db.Users.findOne({
       where: { email: req.body.email },
     });
 
@@ -40,23 +38,22 @@ exports.connexion = async (req, res, next) => {
       return res.status(404).json({ error: "Email incorrect / inconnue" });
     }
 
-    // Comparaison du mot de passe de la requete et du compte user trouve
-    bcrypt.compare(req.body.password, user.password, function (err, result) {
-      if (!result) {
-        return res.status(401).json({ error: "Mot de passe incorrect" });
-      } else {
-        token = jwt.sign({ userId: user.id }, process.env.SECRET_TOKEN, {
-          expiresIn: "24h",
-        });
+    const isPasswordValid = await user.comparePassword(req.body.password);
 
-        res.cookie("jwt", token, {
-          httpOnly: true,
-          maxAge: 1000 * 60 * 60 * 24,
-        });
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Mot de passe incorrect" });
+    }
 
-        res.status(200).json({ userId: user.id });
-      }
+    token = jwt.sign({ userId: user.id }, process.env.SECRET_TOKEN, {
+      expiresIn: "24h",
     });
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
+    });
+
+    res.status(200).json({ userId: user.id });
   } catch (err) {
     next(err);
   }
@@ -66,26 +63,16 @@ exports.getOneUser = async (req, res, next) => {
   try {
     let id;
     let user;
-    let newRecord;
 
     id = req.params.id;
 
-    user = await database.user.findByPk(id);
+    user = await db.Users.findByPk(id);
 
     if (!user) {
       return res.status(404).json({ error: "Utilisateur introuvable." });
     }
 
-    newRecord = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
-
-    res.status(200).json({ user: newRecord });
+    res.status(200).json({ user: user.purge() });
   } catch (err) {
     next(err);
   }
@@ -95,7 +82,7 @@ exports.getAllUsers = async (req, res, next) => {
   try {
     let users;
 
-    users = await database.user.findAll({
+    users = await db.Users.findAll({
       attributes: { exclude: ["password"] },
     });
 
@@ -113,7 +100,7 @@ exports.updateUser = async (req, res, next) => {
 
     id = req.params.id;
 
-    user = await database.user.findByPk(id);
+    user = await db.Users.findByPk(id);
     if (!user) {
       return res.status(404).json({ error: "Utilisateur introuvable." });
     }
@@ -122,14 +109,10 @@ exports.updateUser = async (req, res, next) => {
       ...req.body,
     };
 
-    user
-      .update(newRecord)
-      .then((user) => {
-        res.status(201).json({ user: user });
-      })
-      .catch((err) => {
-        res.status(400).json({ error: err.stack });
-      });
+    // Appeler la méthode updateUser du modèle Users pour mettre à jour l'utilisateur
+    user = await user.updateUser(newRecord);
+
+    res.status(201).json({ user: user });
   } catch (err) {
     next(err);
   }
@@ -139,7 +122,7 @@ exports.deleteUser = async (req, res, next) => {
   try {
     let user;
 
-    user = await database.user.findByPk(req.params.id);
+    user = await db.Users.findByPk(req.params.id);
     if (!user)
       return res.status(404).json({ message: "Utilisateur introuvable." });
 

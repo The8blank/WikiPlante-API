@@ -1,0 +1,24 @@
+{
+  "development": {
+    "username": "user",
+    "password": "mordiate4",
+    "database": "Wikiplante",
+    "host": "172.20.10.2",
+    "dialect": "mysql",
+    "logging" : false
+  },
+  "test": {
+    "username": "user",
+    "password": "mordiate4",
+    "database": "Wikiplante",
+    "host": "170.20.10.2",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "user",
+    "password": "mordiate4",
+    "database": "Wikiplante",
+    "host": "170.20.10.2",
+    "dialect": "mysql"
+  }
+}

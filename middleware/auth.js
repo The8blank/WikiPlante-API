@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const database = require("../models");
+const db = require("../models");
 require("dotenv").config();
 
 /**
@@ -24,7 +24,7 @@ module.exports.checkUser = async (req, res, next) => {
       }
 
       let user;
-      user = await database.user.findByPk(decodedToken.userId);
+      user = await db.Users.findByPk(decodedToken.userId);
 
       if (!user) {
         res.locals.user = null;
@@ -32,11 +32,7 @@ module.exports.checkUser = async (req, res, next) => {
         return next();
       }
 
-      let newRecord = {
-        id: user.id,
-        username: user.username,
-        isAdmin: user.isAdmin,
-      };
+      let newRecord = user.purge();
 
       res.locals.user = newRecord;
       next();

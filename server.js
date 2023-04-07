@@ -2,20 +2,23 @@
  * Point d'entrée de l'application.
  * @module server
  */
+
+// Importation des modules
 const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const database = require("./models");
 const { checkUser } = require("./middleware/auth.js");
 const router = require("./routes");
+const db = require("./models");
 
+// Initialisation de l'application Express
 const app = express();
 
 // Connexion à la base de données, initialisations des tables
 // Retirer force pour la production
-database.sequelize
+db.sequelize
   .sync({ force: true })
   .then(() => {
     console.log("✅ Sync and Reset database.");
@@ -24,28 +27,37 @@ database.sequelize
     console.log("Unable to connect to the database:" + err.message);
   });
 
-// Parse le body de la requete en json
+// Middleware pour parser le corps de la requête en JSON
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
 
-// JWT
+// Middleware pour vérifier l'utilisateur avec JWT
 app.use("*", checkUser);
 
 // Routes
 app.use("/wikiplante-api", router);
 
+// Port d'écoute du serveur
 const PORT = process.env.PORT || 8080;
 
+// Démarrage du serveur
 app.listen(PORT, async () => {
   console.log("🚀Server started Successfully");
 });
 
-app.use( (err, req, res, next) => {
+// Middleware pour gérer les erreurs
+app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send({ error: err.stack });
-})
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message || "Erreur interne du serveur",
+      details: err.details || null
+    },
+  });
+});
 
+// Exportation de l'application Express
 module.exports = app;
