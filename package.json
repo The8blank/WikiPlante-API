@@ -2,10 +2,11 @@
   "name": "wikiplante-api",
   "version": "1.0.0",
   "description": "API WIKIPLANTE",
-  "main": "app.js",
+  "main": "server.js",
   "ENV": "production",
   "scripts": {
     "test": "jest",
+    "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "repository": {

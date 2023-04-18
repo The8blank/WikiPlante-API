@@ -184,6 +184,7 @@ exports.deletePlante = async (req, res, next) => {
 
 // Fonction de contrôleur pour ajouter une image à une plante
 exports.addImage = async (req, res, next) => {
+  console.log("ici");
   const images = [];
   try {
     const planteId = req.params.planteId;
