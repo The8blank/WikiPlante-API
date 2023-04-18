@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "API WIKIPLANTE",
   "main": "app.js",
-  "ENV": "development",
+  "ENV": "production",
   "scripts": {
     "test": "jest",
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
