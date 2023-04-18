@@ -44,34 +44,6 @@ module.exports.checkUser = async (req, res, next) => {
 };
 
 /**
- *@description Cette fonction middleware vérifie si l'utilisateur est admin ou si il est bien l'auteur de la ressource au quelle il veut
- * acceder en comparant l'id donnee en requete, et l'user stocker dans la res.
- * ATTENTION, ce middleware doit etre utilise apres checkUser.
- *Si le token est valide, next est appele
- *Si l'user ne correspond pas aux criteres, la requete est aborte avec un message d'erreur.
- *Si aucun token n'est présent dans les cookies, une réponse est renvoyée avec un message d'erreur indiquant l'absence de token.
- *@param {Object} req - L'objet de demande HTTP.
- *@param {Object} res - L'objet de réponse HTTP.
- *@param {Function} next - La fonction middleware suivante.
- */
-module.exports.checkAuthor = async (req, res, next) => {
-  let authorId;
-  let userFromToken;
-
-  authorId = req.params.id;
-  userFromToken = res.locals.user;
-
-  if (userFromToken.isAdmin) {
-    return next();
-  }
-
-  if (authorId != userFromToken.id)
-    return res.status(498).json({ message: "Requête invalide !" });
-
-  next();
-};
-
-/**
  *@description Cette fonction middleware vérifie si l'utilisateur est authentifié en utilisant un cookie contenant un JSON Web Token (JWT).
  *Si le token est valide, res.decodedToken est défini pour permettre aux middlewares ultérieurs d'accéder aux informations du token.
  *Si le token est invalide ou expiré, une réponse est renvoyée avec un message d'erreur indiquant l'absence de token.

@@ -2,12 +2,13 @@ const express = require("express")
 const router = express.Router()
 
 const UserRouter = require("./User.route")
+const PlanteRouter = require("./Plante.route")
+
 
 // User route
 router.use("/user", UserRouter) 
 
 // Plante route
-
-// Images routes
+router.use("/plante", PlanteRouter)
 
 module.exports = router;

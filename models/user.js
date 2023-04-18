@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     }
     static associate(models) {
       // define association here
+      Users.hasMany(models.Plantes, { foreignKey: "userId" }); // "userId" est la clé étrangère définie dans la migration
     }
 
     /**
@@ -51,11 +52,13 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
-      username: DataTypes.STRING,
+      username: {
+        type: DataTypes.STRING,
+        unique: true,
+      },
       email: {
         type: DataTypes.STRING,
-        primaryKey: true,
-        unique : true
+        unique: true,
       },
       password: {
         type: Sequelize.STRING(1024),
@@ -65,9 +68,9 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       isAdmin: {
-        type : DataTypes.BOOLEAN,
-        defaultValue : false
-      }
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
     {
       sequelize,

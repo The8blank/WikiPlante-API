@@ -17,7 +17,7 @@ const {
   validationUpdateUser,
 } = require("../middleware/inputUserValidator.js");
 
-const { requireAuth, checkAuthor } = require("../middleware/auth.js");
+const { requireAuth } = require("../middleware/auth.js");
 
 // Inscritpion route
 UserRouter.post("/inscription", validationInscription, inscription);
@@ -30,14 +30,12 @@ UserRouter.get("/:id" /* id de l'user */, getOneUser);
 UserRouter.put(
   "/:id" /* id de l'user */,
   requireAuth,
-  checkAuthor,
   validationUpdateUser,
   updateUser
 );
 UserRouter.delete(
   "/:id" /* id de l'user */,
   requireAuth,
-  checkAuthor,
   deleteUser
 );
 

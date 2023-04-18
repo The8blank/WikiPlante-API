@@ -12,6 +12,7 @@ const cookieParser = require("cookie-parser");
 const { checkUser } = require("./middleware/auth.js");
 const router = require("./routes");
 const db = require("./models");
+const path = require("path");
 
 // Initialisation de l'application Express
 const app = express();
@@ -19,7 +20,7 @@ const app = express();
 // Connexion à la base de données, initialisations des tables
 // Retirer force pour la production
 db.sequelize
-  .sync({ force: true })
+  .sync(/* { force: true } */)
   .then(() => {
     console.log("✅ Sync and Reset database.");
   })
@@ -29,10 +30,16 @@ db.sequelize
 
 // Middleware pour parser le corps de la requête en JSON
 app.use(express.json());
-app.use(morgan("dev"));
+app.use(morgan("short"));
 app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
+app.use("/images", express.static("images"));
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 // Middleware pour vérifier l'utilisateur avec JWT
 app.use("*", checkUser);
@@ -50,11 +57,11 @@ app.listen(PORT, async () => {
 
 // Middleware pour gérer les erreurs
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error(err);
   res.status(err.status || 500).json({
     error: {
-      message: err.message || "Erreur interne du serveur",
-      details: err.details || null
+      message: err.errors[0].message || "Erreur interne du serveur",
+      details: err.details || null,
     },
   });
 });
