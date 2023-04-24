@@ -2,17 +2,14 @@
  * Point d'entrée de l'application.
  * @module server
  */
-
-// Importation des modules
 const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { checkUser } = require("./middleware/auth.js");
-const router = require("./routes");
-const db = require("./models");
-const path = require("path");
+const router = require("./routes/index.js");
+const db = require("./models/index.js");
 
 // Initialisation de l'application Express
 const app = express();
