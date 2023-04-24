@@ -15,7 +15,7 @@ const {
 const {
   validationInscription,
   validationUpdateUser,
-} = require("../middleware/inputUserValidator.js");
+} = require("../validations/inputUserValidator.js");
 
 const { requireAuth } = require("../middleware/auth.js");
 

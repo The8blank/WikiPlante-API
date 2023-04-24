@@ -1,5 +1,11 @@
 const jwt = require("jsonwebtoken");
 const db = require("../models");
+const {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  getAllUsers,
+} = require("../services/User.service");
 
 require("dotenv").config();
 
@@ -13,7 +19,7 @@ exports.inscription = async (req, res, next) => {
       password: req.body.password,
     };
 
-    db.Users.create(user)
+    createUser(user)
       .then((user) => {
         res.status(201).json({
           success: true,
@@ -22,7 +28,7 @@ exports.inscription = async (req, res, next) => {
         });
       })
       .catch((err) => {
-        next(err)
+        next(err);
       });
   } catch (err) {
     next(err);
@@ -34,15 +40,17 @@ exports.connexion = async (req, res, next) => {
     let user;
     let token;
 
-    user = await db.Users.findOne({
-      where: { email: req.body.email },
-    });
+    const { email, username, password } = req.body;
+
+    user = await getUserByEmail(email);
 
     if (!user) {
-      return res.status(404).json({ success : false, message: "Email incorrect / inconnue" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Email incorrect / inconnue" });
     }
 
-    const isPasswordValid = await user.comparePassword(req.body.password);
+    const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
       return res
@@ -74,14 +82,7 @@ exports.getOneUser = async (req, res, next) => {
 
     id = req.params.id;
 
-    user = await db.Users.findByPk(id, {
-      include: [
-        {
-          model: db.Plantes,
-          include: "images",
-        },
-      ],
-    });
+    user = await getUserById(id);
 
     if (!user) {
       return res
@@ -89,13 +90,7 @@ exports.getOneUser = async (req, res, next) => {
         .json({ success: false, message: "Utilisateur introuvable." });
     }
 
-    const newRecord = {
-      ...user.dataValues,
-    };
-
-    delete newRecord.password;
-
-    res.status(200).json({ success: true, data: { user: newRecord } });
+    res.status(200).json({ success: true, data: user.purge() });
   } catch (err) {
     next(err);
   }
@@ -105,15 +100,7 @@ exports.getAllUsers = async (req, res, next) => {
   try {
     let users;
 
-    users = await db.Users.findAll({
-      attributes: { exclude: ["password"] },
-      include: [
-        {
-          model: db.Plantes,
-          include: "images",
-        },
-      ],
-    });
+    users = await getAllUsers();
 
     res.status(200).json({ success: true, data: { users: users } });
   } catch (err) {
@@ -129,7 +116,7 @@ exports.updateUser = async (req, res, next) => {
     let userFromToken;
 
     id = req.params.id;
-    user = await db.Users.findByPk(id);
+    user = await getUserById(id);
     userFromToken = res.locals.user;
     newRecord = {
       username: req.body.username,
@@ -143,16 +130,16 @@ exports.updateUser = async (req, res, next) => {
         .json({ success: false, message: "Utilisateur introuvable." });
     }
 
-    if (userFromToken.id === user.id || userFromToken.isAdmin) {
-      user = await user.updateUser(newRecord);
-
-      return res.status(201).json({ success: true, data: { user: user } });
-    } else {
+    if (userFromToken.id != user.id && !userFromToken.isAdmin) {
       return res.status(498).json({
         success: false,
-        message: "Requete Invalide ! Vous n'avez pas les droits.",
+        message: "Vous n'avez pas les droits",
       });
     }
+
+    user = await user.updateUser(newRecord);
+
+    res.status(201).json({ success: true, data: { user: user } });
   } catch (err) {
     next(err);
   }
@@ -162,26 +149,29 @@ exports.deleteUser = async (req, res, next) => {
   try {
     let user;
     let userFromToken;
+    let id;
 
-    user = await db.Users.findByPk(req.params.id);
+    id = req.params.id;
     userFromToken = res.locals.user;
+
+    user = await getUserById(id);
 
     if (!user)
       return res
         .status(404)
         .json({ success: false, error: "Utilisateur introuvable." });
 
-    if (userFromToken.id === user.id || userFromToken.isAdmin) {
-      await user.destroy();
-      return res
-        .status(200)
-        .json({ success: true, message: "Utilisateur supprimé" });
-    } else {
-      res.status(498).json({
+    if (userFromToken.id != user.id && !userFromToken.isAdmin) {
+      return res.status(498).json({
         success: false,
-        message: "Requete Invalide ! Vous n'avez pas les droits.",
+        message: "Vous n'avez pas les droits",
       });
     }
+
+    await user.destroy();
+
+    res.status(200).json({ success: true, message: "Utilisateur supprimé" });
+
   } catch (err) {
     next(err);
   }
