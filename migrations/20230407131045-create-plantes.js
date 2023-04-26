@@ -17,7 +17,6 @@ module.exports = {
         type: Sequelize.STRING,
       },
       espece: {
-        allowNull: false,
         type: Sequelize.STRING,
       },
       sous_espece_cultivar: {

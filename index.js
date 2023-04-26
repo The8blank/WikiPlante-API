@@ -10,20 +10,40 @@ const cookieParser = require("cookie-parser");
 const { checkUser } = require("./middleware/auth.js");
 const router = require("./routes/index.js");
 const db = require("./models/index.js");
+const dataPlante = require("./config/planteFormat.json")
 
 // Initialisation de l'application Express
 const app = express();
 
-// Connexion à la base de données, initialisations des tables
-// Retirer force pour la production
-db.sequelize
-  .sync(/* { force: true } */)
-  .then(() => {
-    console.log("✅ Sync and Reset database.");
+// Fonction qui essaie de se connecter à la base de données
+const connectToDatabase = async () => {
+  try {
+    await db.sequelize.sync({force : true});
+    console.log("✅ Connected to the database.");
+  } catch (err) {
+    console.log(`❌ Unable to connect to the database: ${err.message}`);
+    // Attendre 5 secondes avant d'essayer de se reconnecter
+    setTimeout(connectToDatabase, 5000);
+  }
+};
+
+// Connexion à la base de données et creation d'un admin et de quelques plantes
+connectToDatabase().then(async() => {
+
+   const user = await db.Users.create({
+    username : "admin", 
+    password : "admin",
+    email : "admin@wikiplante.fr", 
+    isAdmin : true
   })
-  .catch((err) => {
-    console.log("Unable to connect to the database:" + err.message);
-  });
+  dataPlante.forEach(async el => {
+
+
+    await user.createPlante({
+      ...el
+    })
+  }); 
+});
 
 // Middleware pour parser le corps de la requête en JSON
 app.use(express.json());
@@ -45,7 +65,7 @@ app.use("*", checkUser);
 app.use("/wikiplante-api", router);
 
 // Port d'écoute du serveur
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3001;
 
 // Démarrage du serveur
 app.listen(PORT, async () => {

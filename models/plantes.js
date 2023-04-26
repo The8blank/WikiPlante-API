@@ -36,10 +36,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       espece: {
         type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
       },
       sous_espece_cultivar: {
         type: Sequelize.STRING,
@@ -67,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Plantes",
-      validate: {
+      /* validate: {
         uniqueGenreEspece() {
           return Plantes.findOne({
             where: {
@@ -85,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
             }
           });
         },
-      },
+      }, */
     }
   );
   return Plantes;

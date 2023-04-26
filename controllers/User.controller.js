@@ -45,6 +45,7 @@ exports.connexion = async (req, res, next) => {
     user = await getUserByEmail(email);
 
     if (!user) {
+      res.cookie("jwt", "", { maxAge: 1 });
       return res
         .status(404)
         .json({ success: false, message: "Email incorrect / inconnue" });
@@ -53,6 +54,7 @@ exports.connexion = async (req, res, next) => {
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
+      res.cookie("jwt", "", { maxAge: 1 });
       return res
         .status(401)
         .json({ success: false, message: "Mot de passe incorrect" });
