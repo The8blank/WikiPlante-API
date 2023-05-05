@@ -65,13 +65,12 @@ exports.connexion = async (req, res, next) => {
     });
 
     res.cookie("jwt", token, {
-      httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24,
     });
 
     res
       .status(200)
-      .json({ success: true, data: { userId: user.id, token: token } });
+      .json({ success: true, data: { user: user.purge(), token: token } });
   } catch (err) {
     next(err);
   }
@@ -180,7 +179,13 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 exports.deconnexion = async (req, res, next) => {
+
   //renvoie un cookie qui s'efface directement
+
   res.cookie("jwt", "", { maxAge: 1 });
-  res.redirect("/");
+  res.status(200).send("")
 };
+
+exports.getMe = async (req, res, next) => {
+  res.status(200).json(res.locals.user)
+}

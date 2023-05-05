@@ -46,10 +46,18 @@ connectToDatabase().then(async() => {
 });
 
 // Middleware pour parser le corps de la requête en JSON
+const corsOptions = {
+  origin:'http://localhost:3000', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200
+}
+
 app.use(express.json());
 app.use(morgan("short"));
-app.use(cors());
-app.use(helmet());
+app.use(cors(corsOptions))
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 app.use(cookieParser());
 app.use("/images", express.static("images"));
 app.use(

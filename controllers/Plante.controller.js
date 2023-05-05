@@ -1,6 +1,7 @@
 // Plante.controller.js
 
 // Importez les modules nécessaires
+const { getPagination, getPagingData } = require("../helpers/pagination");
 const db = require("../models");
 const fs = require("fs");
 
@@ -68,15 +69,40 @@ exports.getOnePlante = async (req, res, next) => {
 // Fonction de contrôleur pour obtenir toutes les plantes
 exports.getAllPlantes = async (req, res, next) => {
   try {
-    // Rechercher toutes les plantes dans la base de données
+    if (req.query.page && req.query.size  ) {
+
+      const {page, size } = req.query
+      
+      const {limit, offset } = getPagination(page, size)
+
+
+      const plantes = await db.Plantes.findAndCountAll({
+        include: "images",
+        limit, 
+        offset
+      });
+
+      const response = getPagingData(plantes, page, limit)
+
+      res.status(200).json({
+        success: true,
+        plantes: response,
+      });
+
+
+    }else {
+       // Rechercher toutes les plantes dans la base de données
     const plantes = await db.Plantes.findAll({
       include: "images",
     });
+    
     res.status(200).json({
       success: true,
       plantes: plantes,
     });
-  } catch (err) {
+    }
+  }
+  catch (err) {
     next(err);
   }
 };
@@ -184,7 +210,6 @@ exports.deletePlante = async (req, res, next) => {
 
 // Fonction de contrôleur pour ajouter une image à une plante
 exports.addImage = async (req, res, next) => {
-  console.log("ici");
   const images = [];
   try {
     const planteId = req.params.planteId;
@@ -232,7 +257,7 @@ exports.addImage = async (req, res, next) => {
     for (const file of files) {
       const image = await db.ImagesPlantes.create({
         planteId,
-        url: file.path, // Le chemin du fichier image
+        url: "http://localhost:3001/" + file.path, // Le chemin du fichier image
       });
       images.push(image);
     }

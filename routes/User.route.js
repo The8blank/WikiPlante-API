@@ -10,6 +10,7 @@ const {
   getOneUser,
   updateUser,
   deleteUser,
+  getMe, 
 } = require("../controllers/User.controller.js");
 
 const {
@@ -26,6 +27,7 @@ UserRouter.get("/deconnexion", deconnexion);
 
 // user display "block"
 UserRouter.get("/", getAllUsers);
+UserRouter.get("/me", requireAuth, getMe)
 UserRouter.get("/:id" /* id de l'user */, getOneUser);
 UserRouter.put(
   "/:id" /* id de l'user */,

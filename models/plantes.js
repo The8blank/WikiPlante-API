@@ -25,32 +25,57 @@ module.exports = (sequelize, DataTypes) => {
   Plantes.init(
     {
       nom_commun: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       genre: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
         validate: {
           notEmpty: true,
         },
       },
       espece: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       sous_espece_cultivar: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       famille: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       ordre: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       categorie: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       port: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
+      },
+      couleur_feuillage: {
+        type: Sequelize.TEXT,
+      },
+      couleur_floraison: {
+        type :Sequelize.TEXT,
+      },
+      periode_floraison: {
+        type : Sequelize.TEXT,
+
+      },
+      description_feuillage: {
+        type : Sequelize.TEXT
+      },
+      description_floraison:{
+        type : Sequelize.TEXT
+      },
+      description_fruit: {
+        type : Sequelize.TEXT
+      },
+      exposition: {
+        type : Sequelize.TEXT,
+      },
+      sol : {
+        type : Sequelize.TEXT
       },
       description: {
         type: Sequelize.TEXT,
