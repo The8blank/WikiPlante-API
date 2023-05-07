@@ -6206,7 +6206,7 @@
     "couleur_feuillage": "vert-grisâtre",
     "couleur_floraison": "rose",
     "periode_floraison": "été",
-    "description_feuillage": "feuilles persistantes, petites et linéaires",
+    "description_feuillage": "feuilles persistantes, petites et étroites",
     "description_floraison": "fleurs roses en forme d'étoile, regroupées en grappes",
     "description_fruit": "capsules contenant de nombreuses graines",
     "exposition": "soleil",
@@ -6363,5 +6363,24 @@
     "description_fruit": "comestible, de forme ovale et de couleur brun-rougeâtre à maturité",
     "exposition": "ensoleillée",
     "sol": "bien drainé"
+  },
+  {
+    "genre": "Monstera",
+    "espece": "adansonii",
+    "nom_commun": "Monstera",
+    "sous_espece_cultivar": "",
+    "famille": "Araceae",
+    "ordre": "Alismatales",
+    "categorie": "plante exotique, plante d'interieur",
+    "port": "grimpant",
+    "description": "La Monstera adansonii est une plante d'intérieur très populaire pour son feuillage décoratif et facile d'entretien.",
+    "couleur_feuillage": "vert foncé",
+    "couleur_floraison": "blanc crème",
+    "periode_floraison": "été",
+    "description_feuillage": "grandes feuilles en forme de coeur avec des perforations décoratives",
+    "description_floraison": "inflorescences en forme de spathe",
+    "description_fruit": "baies rouges comestibles mais non recommandées pour la consommation humaine",
+    "exposition": "lumière vive sans soleil direct",
+    "sol": "riche et bien drainé"
   }
 ]

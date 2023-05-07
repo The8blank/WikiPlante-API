@@ -74,20 +74,19 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      public : {
+        type : Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
       },
     });
 
-    await queryInterface.addConstraint("Plantes", {
-      fields: ["genre", "espece"],
-      type: "unique",
-      name: "unique_genre_espece",
-    });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeConstraint("Plantes", "unique_genre_espece");
     await queryInterface.dropTable("Plantes");
   },
 };

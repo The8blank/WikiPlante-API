@@ -80,6 +80,11 @@ module.exports = (sequelize, DataTypes) => {
       description: {
         type: Sequelize.TEXT,
       },
+      public : {
+        type : Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
       userId: {
         allowNull: false,
         type: Sequelize.UUID,
