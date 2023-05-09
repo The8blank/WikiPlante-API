@@ -50,7 +50,7 @@ connectToDatabase().then(async () => {
 
 // Middleware pour parser le corps de la requête en JSON
 const corsOptions = {
-  origin: process.env.ENV === "dev" ? "https://wikiplante-client-vite.vercel.app" : process.env.CLIENT_ORIGIN,
+  origin: process.env.ENV === "dev" ? "http://localhost:3000" : process.env.CLIENT_ORIGIN,
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
