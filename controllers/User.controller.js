@@ -66,11 +66,13 @@ exports.connexion = async (req, res, next) => {
 
     res.cookie("jwt", token, {
       maxAge: 1000 * 60 * 60 * 24,
+      sameSite: "none",
+      secure: true, // also set secure flag when using SameSite=none
     });
 
     res
       .status(200)
-      .json({ success: false, data: { user: user.purge(), token: token } });
+      .json({ success: true, data: { user: user.purge(), token: token } });
   } catch (err) {
     next(err);
   }
