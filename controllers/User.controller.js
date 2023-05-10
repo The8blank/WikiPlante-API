@@ -70,7 +70,7 @@ exports.connexion = async (req, res, next) => {
 
     res
       .status(200)
-      .json({ success: true, data: { user: user.purge(), token: token } });
+      .json({ success: false, data: { user: user.purge(), token: token } });
   } catch (err) {
     next(err);
   }
