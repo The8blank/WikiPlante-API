@@ -19,7 +19,7 @@ const app = express();
 // Fonction qui essaie de se connecter à la base de données
 const connectToDatabase = async () => {
   try {
-    if (process.env.ENV === "dev") {
+    if (process.env.NODE_ENV === "dev") {
       await db.sequelize.sync({ force: true });
       console.log("✅ Connected to the database.");
     } else {
@@ -35,22 +35,24 @@ const connectToDatabase = async () => {
 
 // Connexion à la base de données et creation d'un admin et de quelques plantes
 connectToDatabase().then(async () => {
-  const user = await db.Users.create({
-    username: process.env.ADMIN_USERNAME,
-    password: process.env.ADMIN_PASSWORD,
-    email: process.env.ADMIN_MAIL,
-    isAdmin: true,
-  });
-  dataPlante.forEach(async (el) => {
-    await user.createPlante({
-      ...el,
+  if (process.env.NODE_ENV === "dev") {
+    const user = await db.Users.create({
+      username: process.env.ADMIN_USERNAME,
+      password: process.env.ADMIN_PASSWORD,
+      email: process.env.ADMIN_MAIL,
+      isAdmin: true,
     });
-  });
+    dataPlante.forEach(async (el) => {
+      await user.createPlante({
+        ...el,
+      });
+    });
+  }
 });
 
 // Middleware pour parser le corps de la requête en JSON
 const corsOptions = {
-  origin: process.env.ENV === "dev" ? "http://localhost:3000" : process.env.CLIENT_ORIGIN,
+  origin: process.env.NODE_ENV === "dev" ? "*" : process.env.CLIENT_ORIGIN,
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
@@ -90,7 +92,7 @@ app.use((err, req, res, next) => {
   console.error(err);
   res.status(err.status || 500).json({
     error: {
-      message: err.errors[0]?.message || "Erreur interne du serveur",
+      message: err || "Erreur interne du serveur",
       details: err.details || null,
     },
   });
