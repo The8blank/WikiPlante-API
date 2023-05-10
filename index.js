@@ -13,8 +13,20 @@ const db = require("./models/index.js");
 const dataPlante = require("./config/planteFormat.json");
 require("dotenv").config();
 
+var fs = require("fs");
+var https = require("https");
+
 // Initialisation de l'application Express
 const app = express();
+const httpsServer = https.createServer(
+ // Provide the private and public key to the server by reading each
+  // file's content with the readFileSync() method.
+  {
+    key: fs.readFileSync("key.pem"),
+    cert: fs.readFileSync("cert.pem"),
+  }, 
+  app
+);
 
 // Fonction qui essaie de se connecter à la base de données
 const connectToDatabase = async () => {
@@ -84,7 +96,7 @@ app.use("/wikiplante-api", router);
 const PORT = process.env.PORT || 3001;
 
 // Démarrage du serveur
-app.listen(PORT, async () => {
+httpsServer.listen(PORT, async () => {
   console.log("🚀Server started Successfully");
 });
 
