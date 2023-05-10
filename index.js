@@ -52,8 +52,9 @@ connectToDatabase().then(async () => {
 
 // Middleware pour parser le corps de la requête en JSON
 const corsOptions = {
-  origin: process.env.NODE_ENV === "dev" ? "*" : process.env.CLIENT_ORIGIN,
-  credentials: true, //access-control-allow-credentials:true
+  credentials: true,
+  origin: true,
+  exposedHeaders: ["Set-Cookie"],
   optionSuccessStatus: 200,
 };
 
