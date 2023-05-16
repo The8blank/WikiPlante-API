@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/The8blank/wikiplante-api/issues"
   },
-  "homepage": "https://github.com/The8blank/wikiplante-api#readme",
+  "homepage": ".",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
