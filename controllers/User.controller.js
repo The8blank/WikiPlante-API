@@ -66,8 +66,6 @@ exports.connexion = async (req, res, next) => {
 
     res.cookie("jwt", token, {
       maxAge: 1000 * 60 * 60 * 24,
-      secure : true,
-      sameSite : "none" 
     });
 
     res
