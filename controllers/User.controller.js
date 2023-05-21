@@ -76,6 +76,54 @@ exports.connexion = async (req, res, next) => {
   }
 };
 
+exports.adminConnexion = async (req, res, next) => {
+  try {
+    let user;
+    let token;
+
+    const { email, username, password } = req.body;
+
+    user = await getUserByEmail(email);
+
+    if (!user) {
+      res.cookie("jwt", "", { maxAge: 1 });
+      return res
+        .status(404)
+        .json({ success: false, message: "Email incorrect / inconnue" });
+    }
+
+    if (user.isAdmin == false) {
+      res.cookie("jwt", "", { maxAge: 1 });
+      return res
+        .status(401)
+        .json({ success: false, message: "Vous n'etes pas administrateur !" });
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
+
+    if (!isPasswordValid) {
+      res.cookie("jwt", "", { maxAge: 1 });
+      return res
+        .status(401)
+        .json({ success: false, message: "Mot de passe incorrect" });
+    }
+
+    token = jwt.sign({ userId: user.id }, process.env.SECRET_TOKEN, {
+      expiresIn: "24h",
+    });
+
+    res.cookie("jwt", token, {
+      maxAge: 1000 * 60 * 60 * 24,
+    });
+
+    res
+      .status(200)
+      .json({ success: true, data: { user: user.purge(), token: token } });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getOneUser = async (req, res, next) => {
   try {
     let id;

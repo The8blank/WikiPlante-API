@@ -4,6 +4,7 @@ const UserRouter = express.Router();
 const {
   inscription,
   connexion,
+  adminConnexion,
   deconnexion,
 
   getAllUsers,
@@ -22,6 +23,7 @@ const { requireAuth } = require("../middleware/auth.js");
 
 // Inscritpion route
 UserRouter.post("/inscription", validationInscription, inscription);
+UserRouter.post("/adminconnexion", adminConnexion)
 UserRouter.post("/connexion", connexion);
 UserRouter.get("/deconnexion", deconnexion);
 

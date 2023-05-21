@@ -257,7 +257,7 @@ exports.addImage = async (req, res, next) => {
     for (const file of files) {
       const image = await db.ImagesPlantes.create({
         planteId,
-        url: "http://localhost:3001/" + file.path, // Le chemin du fichier image
+        url: "https://wikiplante.com/wikiplante-api/" + file.path, // Le chemin du fichier image
       });
       images.push(image);
     }
